@@ -87,4 +87,13 @@ class Tugas extends Model {
         $stmt->bind_param("ii", $id, $user_id);
         return $stmt->execute();
     }
+
+    // SERLY: Ambil tugas berdasarkan kategori
+    public function getByCategory($categoryId) {
+        $stmt = $this->db->prepare("SELECT * FROM tasks WHERE category_id = ? ORDER BY created_at DESC");
+        $stmt->bind_param("i", $categoryId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }

@@ -62,25 +62,3 @@
         </section>
     </main>
 </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const userProfile = document.getElementById('userProfile'); 
-            const profileDropdown = document.getElementById('profileDropdown');
-
-            if (userProfile && profileDropdown) {
-                userProfile.addEventListener('click', function (e) {
-                    e.stopPropagation(); 
-                    profileDropdown.classList.toggle('hidden'); 
-                });
-
-                document.addEventListener('click', function () {
-                    profileDropdown.classList.add('hidden'); 
-                });
-
-                profileDropdown.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                });
-            }
-        });
-    </script>

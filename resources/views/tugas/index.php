@@ -12,17 +12,50 @@
 <body class="bg-gray-900 min-h-screen p-4">
     <div class="max-w-6xl mx-auto">
         <div class="bg-[#1e1e1e] p-6 rounded-lg shadow-lg text-white">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-white">Daftar Tugas</h2>
-                <div class="flex gap-3">
+            <div class="flex flex-wrap justify-between items-center mb-6 gap-3">
+                <h2 class="text-2xl font-semibold text-white flex-shrink-0 w-full text-center sm:text-left">
+                    Daftar Tugas
+                </h2>
+                <div class="flex flex-wrap justify-between items-center w-full gap-3">
+                    <div class="flex gap-3">
                     <a href="?c=favorite&m=index"
-                        class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-full transition">
-                        <i class="fas fa-star mr-2"></i>Favorit
+                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-full transition whitespace-nowrap">
+                    <i class="fas fa-star mr-2"></i>Favorit
                     </a>
+
                     <a href="?c=tugas&m=create"
-                        class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition">
-                        + Tambah Tugas Baru
+                    class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition whitespace-nowrap">
+                    + Tambah Tugas Baru
                     </a>
+                </div>
+                    <!-- UNTUK FITUR SERLY FILTER CATEGORY ADA DISINI
+                    CATATAN: FOREACH DIGUNAKAN UNTUK MELOOP DATA, CATEGORIES DISINGKAT JADI $CAT, DISETIAP $CAT DIAMBIL KATEGORI NYA APA SAJA 
+                    1. DIA AKAN MENCARI CATEGORY ID NYA DULU, LALU DICOCOKAN DENGAN KATEGORI ID YANG ADA DI DATABASE, YANG DITAMILKAN ADALAH NAMANYA 
+                    2. KETIKA MEMILIH NAMANYA, DIA AKAN MEMANGGIL DASHBOARDCONTROLLER.PHP FUNCTION INDEX -->
+                    <form method="GET" action="" class="inline-block">
+                        <!-- action="" berarti form akan submit ke URL halaman saat ini (refresh halaman dengan parameter baru). -->
+                        <input type="hidden" name="c" value="dashboard" />
+                        <input type="hidden" name="m" value="index" />
+                        <!-- c=dashboard → mengindikasikan controller yang akan dipanggil.
+                        m=index → mengindikasikan method/action controller yang akan dipanggil. Ini penting supaya saat form submit, parameter ini tetap dikirim agar routing aplikasi tetap pada halaman dashboard/index. -->
+                        <select name="category_id" onchange="this.form.submit()" 
+                            class="bg-[#2c2e31] border border-gray-700 rounded-full text-gray-100 font-semibold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                            <!-- Dropdown/select untuk memilih kategori dengan nama parameter category_id. 
+                            Onchange="this.form.submit()" → setiap kali pilihan kategori berubah, form langsung dikirim (auto-submit), tanpa perlu klik tombol submit.
+                            class="..." adalah kelas-kelas Tailwind CSS untuk styling dropdown (warna latar, border, rounded corner, teks warna, padding, fokus ring, dll).-->
+                            <option value="">Filter by Category</option>
+                            <!-- Opsi pertama di dropdown yang kosong nilainya (value="") sebagai pilihan default, artinya tidak melakukan filter (tampilkan semua tugas). -->
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= htmlspecialchars($cat->id) ?>" <?= ($selectedCategory == $cat->id) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($cat->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                    <!-- UNTUK FITUR SERLY FILTER CATEGORY ADA DISINI
+                    CATATAN: FOREACH DIGUNAKAN UNTUK MELOOP DATA, CATEGORIES DISINGKAT JADI $CAT, DISETIAP $CAT DIAMBIL KATEGORI NYA APA SAJA 
+                    1. DIA AKAN MENCARI CATEGORY ID NYA DULU, LALU DICOCOKAN DENGAN KATEGORI ID $selectedCategory DI PASSING DARI DASHBOARDCONTROLLER.PHP YANG ADA DI DATABASE, YANG DITAMILKAN ADALAH NAMANYA 
+                    2. KETIKA MEMILIH NAMANYA, DIA AKAN MEMANGGIL DASHBOARDCONTROLLER.PHP FUNCTION INDEX -->
                 </div>
             </div>
 
@@ -40,7 +73,7 @@
                 <?php unset($_SESSION['success_message']); ?>
             <?php endif; ?>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto overflow-y-auto">
                 <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden">
                     <thead>
                         <tr class="bg-[#4a4a4a] text-left text-gray-300 uppercase text-sm leading-normal">

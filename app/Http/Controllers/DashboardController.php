@@ -11,41 +11,46 @@ class DashboardController extends Controller {
   
   public function index() {
     $title = 'Dashboard';
-    $username = $_SESSION['user']['name'] ?? 'Pengguna'; // Pastikan username tersedia
-    $user_id = $_SESSION['user']['id']; // Ambil user_id dari session
+    $username = $_SESSION['user']['name'] ?? 'Pengguna';
 
-    // Ambil pesan sukses atau error dari session
     $error = $_SESSION['error_message'] ?? null;
     $success = $_SESSION['success_message'] ?? null;
 
-    // Hapus pesan dari session setelah diambil agar tidak muncul lagi di refresh berikutnya
     unset($_SESSION['error_message']);
     unset($_SESSION['success_message']);
 
-    // Ambil daftar tugas terbaru dari model Tugas
-    $taskModel = $this->loadModel('Tugas'); // Pastikan model Tugas bisa di-load
-    
-    // Ambil tugas berdasarkan user_id yang sedang login
-    $tasks = $taskModel->getTasksByUserId($user_id); 
+    // FITUR SERLY JUGA ADA DI DALAM SINI DARI VIEWS/DASHBOARD/INDEX
+    // Load model tugas dan kategori
+    $taskModel = $this->loadModel('Tugas');
+    $categoryModel = $this->loadModel('Category');
 
-    // --- DEBUGGING: Cek isi variabel $tasks di sini ---
-    // Anda bisa menghapus baris ini setelah data tampil.
-    // echo '<pre>';
-    // var_dump($tasks);
-    // echo '</pre>';
-    // ---------------------------------------------------
+    // Ambil semua kategori untuk dropdown filter
+    $categories = $categoryModel->getAllCategories();
 
-    // Load view dashboard/index dan teruskan semua data yang diperlukan
+    // Ambil filter kategori dari query string (GET)
+    $categoryFilter = $_GET['category_id'] ?? null;
+
+    if ($categoryFilter) {
+        // Jika ada filter kategori, ambil tugas berdasarkan kategori
+        $tasks = $taskModel->getByCategory($categoryFilter);
+    } else {
+        // Jika tidak ada filter, ambil semua tugas
+        $tasks = $taskModel->getAllTasksWithFavoriteStatus();
+    }
+
+    // Load view dashboard dengan data lengkap
     $this->loadView(
       "dashboard/index",
       [
         'title' => $title,
         'username' => $username,
-        'tasks' => $tasks, // Teruskan data tugas
-        'error' => $error, // Teruskan pesan error
-        'success' => $success // Teruskan pesan sukses
+        'tasks' => $tasks,
+        'categories' => $categories,       // Data kategori untuk filter dropdown
+        'selectedCategory' => $categoryFilter, // Untuk menandai pilihan dropdown
+        'error' => $error,
+        'success' => $success
       ],
-      'main' // Asumsi 'main' adalah layout utama Anda
+      'main'
     );
   }
 }

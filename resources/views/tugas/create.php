@@ -39,11 +39,19 @@
         </div>
 
         <div>
-            <label for="category_id" class="block mb-2 text-gray-300 font-medium">Kategori ID:</label>
-            <input type="text" id="category_id" name="category_id"
-                class="w-full p-3 rounded bg-[#303030] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <p class="mt-1 text-sm text-gray-400">Masukkan ID kategori yang relevan.</p>
+            <label for="category_id" class="block mb-2 text-gray-300 font-medium">Kategori:</label>
+            <select id="category_id" name="category_id"
+                class="w-full p-3 rounded bg-[#303030] text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">-- Pilih Kategori --</option>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= htmlspecialchars($cat->id) ?>">
+                        <?= htmlspecialchars($cat->name) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <p class="mt-1 text-sm text-gray-400">Pilih kategori yang relevan untuk tugas ini.</p>
         </div>
+
 
         <div class="flex flex-col sm:flex-row gap-4 mt-6">
             <button type="submit" class="flex-1 py-3 bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold rounded-full transition">
