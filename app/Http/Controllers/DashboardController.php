@@ -2,7 +2,7 @@
 
 class DashboardController extends Controller {
   public function __construct() {
-    session_start(); // Pastikan sesi dimulai di sini
+    session_start(); 
     if (!isset($_SESSION['user'])) {
       header("Location:?c=auth&m=login");
       exit();
@@ -12,45 +12,41 @@ class DashboardController extends Controller {
   public function index() {
     $title = 'Dashboard';
     $username = $_SESSION['user']['name'] ?? 'Pengguna';
+    $user_id = $_SESSION['user']['id']; // Ambil user_id dari session
 
     $error = $_SESSION['error_message'] ?? null;
     $success = $_SESSION['success_message'] ?? null;
 
-    unset($_SESSION['error_message']);
-    unset($_SESSION['success_message']);
+    unset($_SESSION['error_message']); // Hapus setelah dibaca
+    unset($_SESSION['success_message']); // Hapus setelah dibaca
 
-    // FITUR SERLY JUGA ADA DI DALAM SINI DARI VIEWS/DASHBOARD/INDEX
-    // Load model tugas dan kategori
     $taskModel = $this->loadModel('Tugas');
     $categoryModel = $this->loadModel('Category');
 
-    // Ambil semua kategori untuk dropdown filter
     $categories = $categoryModel->getAllCategories();
 
-    // Ambil filter kategori dari query string (GET)
     $categoryFilter = $_GET['category_id'] ?? null;
 
-    if ($categoryFilter) {
-        // Jika ada filter kategori, ambil tugas berdasarkan kategori
-        $tasks = $taskModel->getByCategory($categoryFilter);
+    if ($categoryFilter && $categoryFilter !== '') { // Pastikan filter tidak kosong
+        // Jika ada filter kategori, ambil tugas berdasarkan kategori dan user_id
+        $tasks = $taskModel->getByCategory($categoryFilter, $user_id); 
     } else {
-        // Jika tidak ada filter, ambil semua tugas
-        $tasks = $taskModel->getAllTasksWithFavoriteStatus();
+        // Jika tidak ada filter, ambil semua tugas milik user_id tersebut
+        $tasks = $taskModel->getAllTasksWithFavoriteStatus($user_id);
     }
 
-    // Load view dashboard dengan data lengkap
     $this->loadView(
-      "dashboard/index",
+      "dashboard/index", // Pastikan path view ini benar
       [
         'title' => $title,
         'username' => $username,
         'tasks' => $tasks,
-        'categories' => $categories,       // Data kategori untuk filter dropdown
-        'selectedCategory' => $categoryFilter, // Untuk menandai pilihan dropdown
+        'categories' => $categories,
+        'selectedCategory' => $categoryFilter, 
         'error' => $error,
         'success' => $success
       ],
-      'main'
+      'main' // Layout yang digunakan
     );
   }
 }
