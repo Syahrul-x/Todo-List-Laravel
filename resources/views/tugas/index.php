@@ -18,16 +18,18 @@
                 </h2>
                 <div class="flex flex-wrap justify-between items-center w-full gap-3">
                     <div class="flex gap-3">
-                    <a href="?c=favorite&m=index"
-                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-full transition whitespace-nowrap">
-                    <i class="fas fa-star mr-2"></i>Favorit
-                    </a>
+                        <a href="?c=favorite&m=index"
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold w-12 h-12 flex items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+                            title="Tugas Favorit">
+                            <i class="fas fa-star text-xl"></i>
+                        </a>
+                        <a href="?c=tugas&m=create"
+                            class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold w-12 h-12 flex items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+                            title="Tambah Tugas Baru">
+                            <i class="fas fa-plus text-xl"></i>
+                        </a>
+                    </div>
 
-                    <a href="?c=tugas&m=create"
-                    class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition whitespace-nowrap">
-                    + Tambah Tugas Baru
-                    </a>
-                </div>
                     <!-- UNTUK FITUR SERLY FILTER CATEGORY ADA DISINI
                     CATATAN: FOREACH DIGUNAKAN UNTUK MELOOP DATA, CATEGORIES DISINGKAT JADI $CAT, DISETIAP $CAT DIAMBIL KATEGORI NYA APA SAJA 
                     1. DIA AKAN MENCARI CATEGORY ID NYA DULU, LALU DICOCOKAN DENGAN KATEGORI ID YANG ADA DI DATABASE, YANG DITAMILKAN ADALAH NAMANYA 
@@ -38,7 +40,7 @@
                         <input type="hidden" name="m" value="index" />
                         <!-- c=dashboard → mengindikasikan controller yang akan dipanggil.
                         m=index → mengindikasikan method/action controller yang akan dipanggil. Ini penting supaya saat form submit, parameter ini tetap dikirim agar routing aplikasi tetap pada halaman dashboard/index. -->
-                        <select name="category_id" onchange="this.form.submit()" 
+                        <select name="category_id" onchange="this.form.submit()"
                             class="bg-[#2c2e31] border border-gray-700 rounded-full text-gray-100 font-semibold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <!-- Dropdown/select untuk memilih kategori dengan nama parameter category_id. 
                             Onchange="this.form.submit()" → setiap kali pilihan kategori berubah, form langsung dikirim (auto-submit), tanpa perlu klik tombol submit.
@@ -103,8 +105,7 @@
                                                 } else {
                                                     echo 'bg-yellow-600';
                                                 }
-                                            ?>
-                                        ">
+                                            ?>">
                                             <?= htmlspecialchars($task['status']) ?>
                                         </span>
                                     </td>
@@ -113,8 +114,7 @@
                                         <a href="?c=favorite&m=toggle&task_id=<?= htmlspecialchars($task['id']) ?>"
                                             class="text-yellow-500 hover:text-yellow-600 font-medium mr-3"
                                             title="<?= (isset($task['is_favorited']) && $task['is_favorited']) ? 'Hapus dari favorit' : 'Tambahkan ke favorit' ?>">
-                                            <i
-                                                class="<?= (isset($task['is_favorited']) && $task['is_favorited']) ? 'fas' : 'far' ?> fa-star"></i>
+                                            <i class="<?= (isset($task['is_favorited']) && $task['is_favorited']) ? 'fas' : 'far' ?> fa-star"></i>
                                         </a>
                                         <a href="?c=tugas&m=update&id=<?= htmlspecialchars($task['id']) ?>"
                                             class="text-[#2684FF] hover:text-[#006bb3] font-medium mr-3">Edit</a>
