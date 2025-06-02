@@ -28,9 +28,16 @@
                     <span class="mr-2">📝</span>
                     <h1 class="text-2xl font-semibold">Meeting Notes</h1>
                 </div>
-                <div class="page-actions">
-                    <a href="?c=notes&m=create#" class="bg-green-600 px-4 py-2 rounded">+</a>
-                </div>
+            <div class="page-actions">
+                <!-- Tombol untuk desktop -->
+                <a href="?c=notes&m=create#" class="hidden md:inline-block bg-green-600 px-4 py-2 rounded text-white">
+                    + tambah catatan
+                </a>
+
+                <!-- Tombol ikon untuk mobile -->
+                <a href="?c=notes&m=create#" class="inline-block md:hidden bg-green-600 p-2 rounded text-white">
+                    +
+                </a>
             </div>
         </section>
 
