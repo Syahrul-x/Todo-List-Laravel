@@ -1,6 +1,11 @@
-<div class="max-w-2xl w-full mx-auto bg-[#1e1e1e] p-6 rounded-lg shadow-lg">
+<?php
+// File: resources/views/tugas/edit.php
+// Pastikan variabel $task (array atau objek) dan $categories (array objek) dikirim dari controller
+// Variabel $title dan $username juga diasumsikan ada dari controller
+?>
+<div class="w-full sm:max-w-2xl mx-auto bg-[#1e1e1e] p-6 rounded-lg shadow-lg">
     <h2 class="text-2xl font-semibold mb-6 text-white text-center">
-        Edit Tugas
+        <?= htmlspecialchars($title ?? 'Edit Tugas') ?>
     </h2>
 
     <?php if (isset($_SESSION['error_message'])): ?>
@@ -18,6 +23,7 @@
     <?php endif; ?>
 
     <form action="?c=tugas&m=saveUpdate" method="post" class="space-y-6">
+        <?php // Pastikan $task adalah array dan memiliki kunci 'id' ?>
         <input type="hidden" name="id" value="<?= htmlspecialchars($task['id'] ?? '') ?>">
 
         <div>
@@ -44,18 +50,30 @@
         </div>
 
         <div>
-            <label for="category_id" class="block mb-2 text-gray-300 font-medium">Kategori ID:</label>
-            <input type="text" id="category_id" name="category_id"
-                value="<?= htmlspecialchars($task['category_id'] ?? '') ?>"
-                class="w-full p-3 rounded bg-[#303030] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <p class="mt-1 text-sm text-gray-400">Masukkan ID kategori yang relevan.</p>
+            <label for="category_id" class="block mb-2 text-gray-300 font-medium">Kategori:</label>
+            <select id="category_id" name="category_id"
+                class="w-full p-3 rounded bg-[#303030] text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">-- Pilih Kategori --</option>
+                <?php if (!empty($categories)): ?>
+                    <?php foreach ($categories as $cat): ?>
+                        <?php // Pastikan $cat adalah objek dan memiliki properti id dan name ?>
+                        <?php // Pastikan $task adalah array dan memiliki kunci category_id ?>
+                        <option value="<?= htmlspecialchars($cat->id) ?>" 
+                                <?= (isset($task['category_id']) && $task['category_id'] == $cat->id) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat->name) ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+            <p class="mt-1 text-sm text-gray-400">Pilih kategori yang relevan untuk tugas ini.</p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4">
+
+        <div class="flex flex-col sm:flex-row gap-4 mt-6">
             <button type="submit" class="flex-1 py-3 bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold rounded-full transition">
                 Simpan Perubahan
             </button>
-            <a href="?c=dashboard&m=index" class="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-full transition text-center">
+            <a href="?c=dashboard&m=index" class="flex-1 text-center py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-full transition">
                 Batal
             </a>
         </div>
