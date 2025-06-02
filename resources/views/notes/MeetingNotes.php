@@ -29,7 +29,7 @@
                     <h1 class="text-2xl font-semibold">Meeting Notes</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="?c=notes&m=create#" class="bg-green-600 px-4 py-2 rounded">+ Tambah Catatan</a>
+                    <a href="?c=notes&m=create#" class="bg-green-600 px-4 py-2 rounded">+</a>
                 </div>
             </div>
         </section>
