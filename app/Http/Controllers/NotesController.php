@@ -21,12 +21,12 @@ class NotesController extends Controller
             header("Location:?c=auth&m=login");
             exit();
         }
-        $this->loadView('notes/MeetingNotes', ['notes' => $notes,'username' => $_SESSION['user']['name']], 'main');
+        $this->loadView('notes/meetingnotes', ['notes' => $notes,'username' => $_SESSION['user']['name']], 'main');
     }
 
     public function create()
     {
-        $this->loadView('notes/CreateNotes', ['username' => $_SESSION['user']['name']], 'main');
+        $this->loadView('notes/createnotes', ['username' => $_SESSION['user']['name']], 'main');
     }
 
     public function store()
@@ -57,7 +57,7 @@ class NotesController extends Controller
         $notesModel = $this->loadModel('Notes');
         $note = $notesModel->getById($id);
 
-        $this->loadView('notes/EditNotes', ['note' => $note,'username' => $_SESSION['user']['name']], 'main');
+        $this->loadView('notes/editnotes', ['note' => $note,'username' => $_SESSION['user']['name']], 'main');
     }
 
     public function update()
