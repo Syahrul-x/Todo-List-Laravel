@@ -5,3 +5,4 @@
 </footer>
 
 <script src="js/profileDropdown.js"></script>
+<script src="js/categoryManagement.js"></script>

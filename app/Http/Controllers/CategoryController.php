@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 class CategoryController extends Controller
 {
     protected $categoryModel;
@@ -115,10 +117,49 @@ class CategoryController extends Controller
 
         $id = $_GET['id'] ?? null;
         if ($id) {
+            // Periksa apakah kategori digunakan di tabel 'tasks' (atau tabel lain yang relevan)
+            $categoryInUse = $this->categoryModel->checkIfCategoryInUse($id);
+            
+            if ($categoryInUse) {
+                // Jika kategori digunakan, beri peringatan kepada pengguna
+                $this->loadView("category/index", [
+                    'error' => "Kategori sedang digunakan di tugas, jadi tidak dapat dihapus.",
+                    'categories' => $this->categoryModel->getAllCategories(),
+                    'title' => 'Category Management'
+                ], "main");
+                return;
+            }
+
+            // Jika tidak digunakan, hapus kategori
             $this->categoryModel->delete($id);
+            header("Location:?c=category&m=index");
+            exit();
         }
-        header("Location:?c=category&m=index");
-        exit();
     }
+
+
+    public function search()
+    {
+        session_start();
+        if (!isset($_SESSION['user'])) {
+            header("Location:?c=auth&m=login");
+            exit();
+        }
+
+        // Ambil kata kunci pencarian dari parameter GET
+        $searchTerm = $_GET['search'] ?? '';
+        
+        // Pastikan pencarian tidak kosong dan kemudian cari kategori
+        if (!empty($searchTerm)) {
+            $categories = $this->categoryModel->searchCategories($searchTerm);
+        } else {
+            // Jika tidak ada input pencarian, tampilkan semua kategori
+            $categories = $this->categoryModel->getAllCategories();
+        }
+
+        // Kembalikan hasil pencarian dalam format JSON
+        echo json_encode($categories);
+    }
+
 
 }

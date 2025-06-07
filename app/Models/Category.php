@@ -37,9 +37,46 @@ class Category extends Model {
     }
 
     // Menghapus kategori berdasarkan id
-    public function delete($id) {
-        $stmt = $this->db->prepare("DELETE FROM categories WHERE id = ?");
-        $stmt->bind_param("i", $id);
+    public function delete($categoryId)
+    {
+        // Hapus kategori berdasarkan id
+        $sql = "DELETE FROM categories WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $categoryId);
         return $stmt->execute();
     }
+
+    public function checkIfCategoryInUse($categoryId)
+    {
+        // Query untuk memeriksa apakah kategori digunakan di tabel 'tasks'
+        $sql = "SELECT COUNT(*) FROM tasks WHERE category_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $categoryId);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
+
+        return $count > 0;  // Jika kategori digunakan, return true
+    }
+
+    public function searchCategories($searchTerm)
+    {
+        // Query SQL untuk mencari kategori berdasarkan nama yang sesuai dengan pencarian
+        $sql = "SELECT * FROM categories WHERE name LIKE ?";
+        $stmt = $this->db->prepare($sql);
+        $searchTerm = "%" . $searchTerm . "%";  // Membuat wildcard untuk pencarian
+        $stmt->bind_param("s", $searchTerm); // Binding parameter string
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Mengambil semua kategori hasil pencarian dan mengembalikannya
+        $categories = [];
+        while ($row = $result->fetch_object()) {
+            $categories[] = $row;
+        }
+
+        return $categories;
+    }
+
 }
