@@ -6,3 +6,4 @@
 
 <script src="js/profileDropdown.js"></script>
 <script src="js/categoryManagement.js"></script>
+<script src="js/notesManagement.js"></script>

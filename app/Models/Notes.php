@@ -64,4 +64,34 @@ class Notes extends Model
         $stmt->bind_param("i", $id);
         return $stmt->execute();
     }
+
+        public function searchAll($searchTerm)
+    {
+        $searchTerm = "%{$searchTerm}%";
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE title LIKE ? ORDER BY created_at DESC");
+        $stmt->bind_param("s", $searchTerm);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $notes = [];
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+        return $notes;
+    }
+
+        public function searchByUser($searchTerm, $userId)
+    {
+        $searchTerm = "%{$searchTerm}%";
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE user_id = ? AND title LIKE ? ORDER BY created_at DESC");
+        $stmt->bind_param("is", $userId, $searchTerm);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $notes = [];
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+        return $notes;
+    }
 }

@@ -121,4 +121,31 @@ class NotesController extends Controller
             'username' => $_SESSION['user']['name']
         ], 'main');
     }
+
+        public function search()
+    {
+        header('Content-Type: application/json');
+        $notesModel = $this->loadModel('Notes');
+        $searchTerm = $_GET['search'] ?? '';
+
+        $notes = [];
+        // Cek apakah user adalah admin
+        if (isset($_SESSION['user']) && $_SESSION['user']['name'] === 'admin') {
+            // Jika admin dan ada parameter 'context' bernilai 'manage', cari semua notes
+            if (isset($_GET['context']) && $_GET['context'] === 'manage') {
+                $notes = $notesModel->searchAll($searchTerm);
+            } else {
+                 // Jika admin tapi di halaman biasa (meetingnotes), cari notes miliknya saja
+                 $userId = $_SESSION['user']['id'];
+                 $notes = $notesModel->searchByUser($searchTerm, $userId);
+            }
+        } else {
+            // Jika bukan admin, cari hanya notes miliknya
+            $userId = $_SESSION['user']['id'];
+            $notes = $notesModel->searchByUser($searchTerm, $userId);
+        }
+
+        echo json_encode($notes);
+        exit();
+    }
 }

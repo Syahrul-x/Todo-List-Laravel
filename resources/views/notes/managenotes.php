@@ -36,6 +36,10 @@
             </div>
         </section>
 
+     <div class="mb-4">
+            <input type="text" id="manageNotesSearchInput" class="w-full p-2 rounded bg-[#303030] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cari semua catatan berdasarkan judul...">
+        </div>
+        
         <div class="overflow-x-auto overflow-y-auto">
             <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden table-fixed">
                 <thead>
@@ -47,7 +51,7 @@
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="text-gray-200 text-sm font-light">
+                <tbody class="text-gray-200 text-sm font-light" id="manageNotesTableBody">
                     <?php if (!empty($notes)): ?>
                         <?php foreach ($notes as $note): ?>
                             <tr class="border-b border-gray-600 hover:bg-[#3a3a3a]">
