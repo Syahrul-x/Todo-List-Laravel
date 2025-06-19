@@ -13,7 +13,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100"> 
+<body class="bg-gray-900 text-gray-100">
     <div class="flex flex-col lg:flex-row min-h-screen">
         <aside class="w-full lg:w-1/4 bg-[#2c2e31] p-4 shadow-lg">
             <div class="user-info-sidebar text-center mb-6">
@@ -29,11 +29,12 @@
                     <li><a href="#" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">📄</span> All content</a></li>
                     <li><a href="#" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">✅</span> <?= htmlspecialchars($username ?? 'Pengguna') ?>'s task list</a></li>
                     <li><a href="?c=notes&m=index" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">📝</span> Meeting notes</a></li>
+                    <li><a href="?c=event&m=index" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">🗓️</span> Event List</a></li>
                 </ul>
             </nav>
         </aside>
 
-        <main class="flex-1 bg-[#1e1e1e] p-6 overflow-y-auto"> 
+        <main class="flex-1 bg-[#1e1e1e] p-6 overflow-y-auto">
             <nav class="breadcrumb text-[#a9b7c6] mb-6">
                 <a href="#" class="hover:text-white">Home</a> <span class="mx-2">/</span> <span class="text-[#007AFF]"><?= htmlspecialchars($username ?? 'Pengguna') ?>'s task list</span>
             </nav>
@@ -41,7 +42,7 @@
             <section class="page-header mb-6">
                 <div class="flex items-center justify-between">
                     <div class="page-title text-[#e0e0e0] flex items-center">
-                        <span class="mr-2 text-3xl">📋</span> 
+                        <span class="mr-2 text-3xl">📋</span>
                         <h1 class="text-2xl font-semibold">Today's Tasks</h1>
                     </div>
                 </div>
@@ -50,7 +51,7 @@
             <section class="actual-task-list-data">
                 <?php
                 // Logika untuk menyertakan konten tugas/index.php
-                // Variabel $tasks, $error, $success harus disiapkan oleh controller 
+                // Variabel $tasks, $error, $success harus disiapkan oleh controller
                 // yang memanggil dashboard/index.php ini.
 
                 // Contoh cara mendefinisikan variabel dummy untuk pengujian:
@@ -67,7 +68,7 @@
                 // __DIR__ adalah direktori dari file saat ini (dashboard/index.php).
                 // Path ini akan naik satu level (dari 'dashboard' ke 'views'),
                 // lalu masuk ke folder 'tugas' untuk menemukan 'index.php'.
-                include __DIR__ . '/../tugas/index.php'; 
+                include __DIR__ . '/../tugas/index.php';
                 ?>
             </section>
         </main>
