@@ -42,42 +42,41 @@
             </div>
         </section>
 
-         <div class="overflow-x-auto overflow-y-auto">
-                <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden">
-                    <thead>
-                        <tr class="bg-[#4a4a4a] text-left text-gray-300 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6">Rapat</th>
-                            <th class="py-3 px-6">Isi</th>
-                            <th class="py-3 px-6">Tanggal Dibuat</th>
-                            <th class="py-3 px-6 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-200 text-sm font-light">
-                        <?php if (!empty($notes)): ?>
-                            <?php foreach ($notes as $note): ?>
-                                <tr class="border-b border-gray-600 hover:bg-[#3a3a3a]">
-                                    <td class="py-3 px-6 whitespace-nowrap"><?= htmlspecialchars($note['title']) ?></td>
-                                    <td class="py-3 px-6">
-                                        <?= htmlspecialchars(substr($note['description'] ?? '', 0, 50)) ?>
-                                        <?= strlen($note['description'] ?? '') > 50 ? '...' : '' ?>
-                                    </td>
-                                    <td class="py-3 px-6 whitespace-nowrap"><?= htmlspecialchars($note['created_at']) ?></td>
-                                    <td class="py-3 px-6 whitespace-nowrap text-center">
-                                        <a href="?c=notes&m=edit&id=<?= htmlspecialchars($note['id']) ?>"
-                                            class="text-[#2684FF] hover:text-[#006bb3] font-medium mr-3">Edit</a>
-                                        <a href="?c=notes&m=destroy&id=<?= htmlspecialchars($note['id']) ?>"
-                                            onclick="return confirm('Yakin ingin menghapus tugas ini?')"
-                                            class="text-red-500 hover:text-red-700 font-medium">Hapus</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="py-6 px-6 text-center text-gray-400">Belum ada catatan.</td>
+        <div class="overflow-x-auto overflow-y-auto">
+            <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden table-fixed">
+                <thead>
+                    <tr class="bg-[#4a4a4a] text-left text-gray-300 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6">Rapat</th>
+                        <th class="py-3 px-6">Isi</th>
+                        <th class="py-3 px-6">Tanggal Dibuat</th>
+                        <th class="py-3 px-6 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-200 text-sm font-light">
+                    <?php if (!empty($notes)): ?>
+                        <?php foreach ($notes as $note): ?>
+                            <tr class="border-b border-gray-600 hover:bg-[#3a3a3a]">
+                                <td class="py-3 px-6"><?= htmlspecialchars($note['title']) ?></td>
+                                <td class="py-3 px-6">
+                                    <?= htmlspecialchars($note['description'] ?? '') ?>
+                                </td>
+                                <td class="py-3 px-6"><?= htmlspecialchars($note['created_at']) ?></td>
+                                <td class="py-3 px-6 text-center">
+                                    <a href="?c=notes&m=edit&id=<?= htmlspecialchars($note['id']) ?>"
+                                        class="text-[#2684FF] hover:text-[#006bb3] font-medium mr-3">Edit</a>
+                                    <a href="?c=notes&m=destroy&id=<?= htmlspecialchars($note['id']) ?>"
+                                        onclick="return confirm('Yakin ingin menghapus tugas ini?')"
+                                        class="text-red-500 hover:text-red-700 font-medium">Hapus</a>
+                                </td>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5" class="py-6 px-6 text-center text-gray-400">Belum ada catatan.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </main>
 </div>
