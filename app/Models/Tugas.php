@@ -102,4 +102,23 @@ class Tugas extends Model {
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    // New method: Search tasks by title and user_id
+    public function searchTasks($searchTerm, $user_id) {
+        $stmt = $this->db->prepare("
+            SELECT t.*, c.name as category_name, p.name as priority_name,
+                   CASE WHEN f.id IS NOT NULL THEN 1 ELSE 0 END as is_favorited
+            FROM tasks t
+            LEFT JOIN categories c ON t.category_id = c.id
+            LEFT JOIN priorities p ON t.priority_id = p.id
+            LEFT JOIN favorites f ON t.id = f.task_id AND f.user_id = ?
+            WHERE t.user_id = ? AND t.title LIKE ?
+            ORDER BY t.created_at DESC
+        ");
+        $searchTerm = "%" . $searchTerm . "%"; // Add wildcards for LIKE search
+        $stmt->bind_param("iis", $user_id, $user_id, $searchTerm);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }

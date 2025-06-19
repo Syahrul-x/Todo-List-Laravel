@@ -7,6 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Tugas</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* CSS tambahan untuk responsivitas */
+        @media (max-width: 640px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-section > form {
+                width: 100%;
+            }
+            .filter-section select {
+                width: 100%;
+                margin-bottom: 0.75rem; /* Space between dropdowns on small screens */
+            }
+            .filter-section input[type="text"] {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-gray-900 min-h-screen p-4">
@@ -16,7 +36,7 @@
                 <h2 class="text-2xl font-semibold text-white flex-shrink-0 w-full text-center sm:text-left">
                     Daftar Tugas
                 </h2>
-                <div class="flex flex-wrap justify-between items-center w-full gap-3">
+                <div class="flex flex-wrap justify-between items-center w-full gap-3 filter-section">
                     <div class="flex gap-3">
                         <a href="?c=favorite&m=index"
                             class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold w-12 h-12 flex items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105"
@@ -30,10 +50,19 @@
                         </a>
                     </div>
 
+                    <form method="GET" action="" class="inline-block flex-grow" id="taskFilterForm">
+                        <input type="hidden" name="c" value="dashboard" />
+                        <input type="hidden" name="m" value="index" />
+                        <input type="text" name="search" id="taskSearchInput" placeholder="Cari tugas berdasarkan judul..."
+                               value="<?= htmlspecialchars($searchTerm ?? '') ?>"
+                               class="w-full p-2 rounded-full bg-[#2c2e31] border border-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                    </form>
+
                     <form method="GET" action="" class="inline-block">
                         <input type="hidden" name="c" value="dashboard" />
                         <input type="hidden" name="m" value="index" />
-                        <select name="category_id" onchange="this.form.submit()"
+                        <select name="category_id" id="categoryFilterSelect"
                             class="bg-[#2c2e31] border border-gray-700 rounded-full text-gray-100 font-semibold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <option value="">Filter by Category</option>
                             <?php foreach ($categories as $cat): ?>
@@ -47,7 +76,7 @@
                     <form method="GET" action="" class="inline-block">
                         <input type="hidden" name="c" value="dashboard" />
                         <input type="hidden" name="m" value="index" />
-                        <select name="priority_id" onchange="this.form.submit()"
+                        <select name="priority_id" id="priorityFilterSelect"
                             class="bg-[#2c2e31] border border-gray-700 rounded-full text-gray-100 font-semibold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <option value="">Filter by Priority</option>
                             <?php foreach ($priorities as $prio): ?>
@@ -61,14 +90,14 @@
             </div>
 
             <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="mb-4 p-3 bg-red-600 text-white rounded font-medium">
+                <div class="mb-4 p-3 bg-red-600 text-white rounded font-medium" id="error-message">
                     <?= htmlspecialchars($_SESSION['error_message']) ?>
                 </div>
                 <?php unset($_SESSION['error_message']); ?>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="mb-4 p-3 bg-green-600 text-white rounded font-medium">
+                <div class="mb-4 p-3 bg-green-600 text-white rounded font-medium" id="success-message">
                     <?= htmlspecialchars($_SESSION['success_message']) ?>
                 </div>
                 <?php unset($_SESSION['success_message']); ?>
@@ -82,11 +111,12 @@
                             <th class="py-3 px-6">Deskripsi</th>
                             <th class="py-3 px-6">Status</th>
                             <th class="py-3 px-6">Kategori</th>
-                            <th class="py-3 px-6">Prioritas</th> <th class="py-3 px-6">Tanggal Dibuat</th>
+                            <th class="py-3 px-6">Prioritas</th>
+                            <th class="py-3 px-6">Tanggal Dibuat</th>
                             <th class="py-3 px-6 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-200 text-sm font-light">
+                    <tbody class="text-gray-200 text-sm font-light" id="taskTableBody">
                         <?php if (!empty($tasks)): ?>
                             <?php foreach ($tasks as $task): ?>
                                 <tr class="border-b border-gray-600 hover:bg-[#3a3a3a]">
@@ -113,7 +143,8 @@
                                         <?= htmlspecialchars($task['category_name'] ?? '-') ?>
                                     </td>
                                     <td class="py-3 px-6 whitespace-nowrap">
-                                        <?= htmlspecialchars($task['priority_name'] ?? '-') ?> </td>
+                                        <?= htmlspecialchars($task['priority_name'] ?? '-') ?>
+                                    </td>
                                     <td class="py-3 px-6 whitespace-nowrap"><?= htmlspecialchars($task['created_at']) ?></td>
                                     <td class="py-3 px-6 whitespace-nowrap text-center">
                                         <a href="?c=favorite&m=toggle&task_id=<?= htmlspecialchars($task['id']) ?>"
@@ -139,5 +170,6 @@
             </div>
         </div>
     </div>
+    <script src="js/taskManagement.js"></script>
 </body>
 </html>
