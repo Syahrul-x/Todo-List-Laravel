@@ -144,21 +144,13 @@ CREATE TABLE `messages` (
 --
 
 CREATE TABLE `notes` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL PRIMARY KEY,
   `user_id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text DEFAULT '',
+  `title` varchar(255) NOT NULL UNIQUE,
+  `description` text,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `notes`
---
-
-INSERT INTO `notes` (`id`, `user_id`, `title`, `description`, `created_at`, `updated_at`) VALUES
-(1, 2, 'tes', 'abs', '2025-05-28 02:05:07', '2025-05-28 02:05:07'),
-(2, 2, 'b', 'aa', '2025-05-28 02:05:15', '2025-05-28 02:05:15');
 
 -- --------------------------------------------------------
 
@@ -461,6 +453,32 @@ ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
   ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
+
+-- Add this to your fp01.sql file, or run directly on your database
+--
+-- Table structure for table priorities
+--
+CREATE TABLE priorities (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  description TEXT DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Add priority_id to tasks table
+--
+ALTER TABLE tasks
+ADD COLUMN priority_id INT(11) DEFAULT NULL,
+ADD CONSTRAINT tasks_ibfk_3 FOREIGN KEY (priority_id) REFERENCES priorities (id) ON DELETE SET NULL;
+
+-- Optional: Insert some default priorities
+INSERT INTO priorities (name, description) VALUES
+('Tinggi', 'Urgent'),
+('Sedang', 'Penting tapi ga Urgent'),
+('Rendah', 'bisa ditunda');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

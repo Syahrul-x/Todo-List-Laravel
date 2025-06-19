@@ -52,9 +52,6 @@
                 <?php endif; ?>
             </div>
         </section>
-        <div class="mb-4">
-            <input type="text" id="searchInput" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search Notes by Name...">
-        </div>
 
         <div class="overflow-x-auto overflow-y-auto">
             <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden table-fixed">

@@ -25,17 +25,7 @@
                     <span class="mr-2">📝</span>
                     <h1 class="text-2xl font-semibold">Manage All Notes</h1>
                 </div>
-            <div class="page-actions">
-                <!-- Tombol untuk desktop -->
-                <a href="?c=notes&m=create#" class="hidden md:inline-block bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
-                    + tambah catatan
-                </a>
-
-                <!-- Tombol ikon untuk mobile -->
-                <a href="?c=notes&m=create#" class="inline-block md:hidden bg-green-600 hover:bg-green-700 p-2 rounded text-white">
-                    +
-                </a>
-                    
+            <div class="page-actions">     
                 <a href="?c=notes&m=index" class="hidden md:inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white transition-colors duration-200 ml-2">
                     < back
                 </a>
