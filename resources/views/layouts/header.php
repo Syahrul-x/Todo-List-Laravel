@@ -8,7 +8,6 @@ $userInitials = strtoupper(substr($username, 0, 2));
 
 <header class="fixed top-0 left-0 w-full z-50 bg-[#2c2e31] shadow-lg p-4">
     <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap">
-        <!-- Logo -->
         <a href="?c=dashboard&m=index" class="flex items-center mr-4">
             <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white">
                 <rect width="30" height="30" rx="4" fill="#2684FF"/>
@@ -18,7 +17,6 @@ $userInitials = strtoupper(substr($username, 0, 2));
             </svg>
         </a>
 
-        <!-- Desktop nav -->
         <nav class="hidden lg:flex space-x-4 flex-grow justify-center">
             <a href="?c=dashboard&m=index" class="text-white text-lg font-medium hover:bg-blue-700 hover:text-white px-3 py-2 border border-[#2e3235] rounded-md shadow-lg text-white">
                 Dashboard
@@ -26,16 +24,18 @@ $userInitials = strtoupper(substr($username, 0, 2));
             <a href="?c=category&m=index" class="text-white text-lg font-medium hover:bg-blue-700 hover:text-white px-3 py-2 border border-[#2e3235] rounded-md shadow-lg text-white">
                 Category Management
             </a>
+            <a href="?c=priority&m=index" class="text-white text-lg font-medium hover:bg-blue-700 hover:text-white px-3 py-2 border border-[#2e3235] rounded-md shadow-lg text-white">
+                Priority Management
+            </a>
         </nav>
 
-        <!-- Mobile nav dropdown -->
         <select onchange="if(this.value) window.location.href=this.value" class="block lg:hidden bg-[#2c2e31] border border-gray-600 text-white rounded px-3 py-2 w-40">
             <option value="">Menu</option>
             <option value="?c=dashboard&m=index">Dashboard</option>
             <option value="?c=category&m=index">Category Management</option>
+            <option value="?c=priority&m=index">Priority Management</option>
         </select>
 
-        <!-- User Profile -->
         <div class="relative ml-4 mt-3 lg:mt-0 flex-shrink-0">
             <div id="userProfile" class="flex items-center justify-center w-10 h-10 rounded-full bg-[#ff5630] text-white cursor-pointer select-none">
                 <?= $userInitials ?>

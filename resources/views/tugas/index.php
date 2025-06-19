@@ -30,34 +30,33 @@
                         </a>
                     </div>
 
-                    <!-- UNTUK FITUR SERLY FILTER CATEGORY ADA DISINI
-                    CATATAN: FOREACH DIGUNAKAN UNTUK MELOOP DATA, CATEGORIES DISINGKAT JADI $CAT, DISETIAP $CAT DIAMBIL KATEGORI NYA APA SAJA 
-                    1. DIA AKAN MENCARI CATEGORY ID NYA DULU, LALU DICOCOKAN DENGAN KATEGORI ID YANG ADA DI DATABASE, YANG DITAMILKAN ADALAH NAMANYA 
-                    2. KETIKA MEMILIH NAMANYA, DIA AKAN MEMANGGIL DASHBOARDCONTROLLER.PHP FUNCTION INDEX -->
                     <form method="GET" action="" class="inline-block">
-                        <!-- action="" berarti form akan submit ke URL halaman saat ini (refresh halaman dengan parameter baru). -->
                         <input type="hidden" name="c" value="dashboard" />
                         <input type="hidden" name="m" value="index" />
-                        <!-- c=dashboard → mengindikasikan controller yang akan dipanggil.
-                        m=index → mengindikasikan method/action controller yang akan dipanggil. Ini penting supaya saat form submit, parameter ini tetap dikirim agar routing aplikasi tetap pada halaman dashboard/index. -->
                         <select name="category_id" onchange="this.form.submit()"
                             class="bg-[#2c2e31] border border-gray-700 rounded-full text-gray-100 font-semibold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                            <!-- Dropdown/select untuk memilih kategori dengan nama parameter category_id. 
-                            Onchange="this.form.submit()" → setiap kali pilihan kategori berubah, form langsung dikirim (auto-submit), tanpa perlu klik tombol submit.
-                            class="..." adalah kelas-kelas Tailwind CSS untuk styling dropdown (warna latar, border, rounded corner, teks warna, padding, fokus ring, dll).-->
                             <option value="">Filter by Category</option>
-                            <!-- Opsi pertama di dropdown yang kosong nilainya (value="") sebagai pilihan default, artinya tidak melakukan filter (tampilkan semua tugas). -->
                             <?php foreach ($categories as $cat): ?>
-                                <option value="<?= htmlspecialchars($cat->id) ?>" <?= ($selectedCategory == $cat->id) ? 'selected' : '' ?>>
+                                <option value="<?= htmlspecialchars($cat->id) ?>" <?= (isset($selectedCategory) && $selectedCategory == $cat->id) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($cat->name) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </form>
-                    <!-- UNTUK FITUR SERLY FILTER CATEGORY ADA DISINI
-                    CATATAN: FOREACH DIGUNAKAN UNTUK MELOOP DATA, CATEGORIES DISINGKAT JADI $CAT, DISETIAP $CAT DIAMBIL KATEGORI NYA APA SAJA 
-                    1. DIA AKAN MENCARI CATEGORY ID NYA DULU, LALU DICOCOKAN DENGAN KATEGORI ID $selectedCategory DI PASSING DARI DASHBOARDCONTROLLER.PHP YANG ADA DI DATABASE, YANG DITAMILKAN ADALAH NAMANYA 
-                    2. KETIKA MEMILIH NAMANYA, DIA AKAN MEMANGGIL DASHBOARDCONTROLLER.PHP FUNCTION INDEX -->
+
+                    <form method="GET" action="" class="inline-block">
+                        <input type="hidden" name="c" value="dashboard" />
+                        <input type="hidden" name="m" value="index" />
+                        <select name="priority_id" onchange="this.form.submit()"
+                            class="bg-[#2c2e31] border border-gray-700 rounded-full text-gray-100 font-semibold py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                            <option value="">Filter by Priority</option>
+                            <?php foreach ($priorities as $prio): ?>
+                                <option value="<?= htmlspecialchars($prio->id) ?>" <?= (isset($selectedPriority) && $selectedPriority == $prio->id) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($prio->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
                 </div>
             </div>
 
@@ -82,7 +81,8 @@
                             <th class="py-3 px-6">Judul</th>
                             <th class="py-3 px-6">Deskripsi</th>
                             <th class="py-3 px-6">Status</th>
-                            <th class="py-3 px-6">Tanggal Dibuat</th>
+                            <th class="py-3 px-6">Kategori</th>
+                            <th class="py-3 px-6">Prioritas</th> <th class="py-3 px-6">Tanggal Dibuat</th>
                             <th class="py-3 px-6 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -96,8 +96,8 @@
                                         <?= strlen($task['description'] ?? '') > 50 ? '...' : '' ?>
                                     </td>
                                     <td class="py-3 px-6 whitespace-nowrap">
-                                        <span class="py-1 px-3 rounded-full text-xs 
-                                            <?php 
+                                        <span class="py-1 px-3 rounded-full text-xs
+                                            <?php
                                                 if ($task['status'] == 'Selesai') {
                                                     echo 'bg-green-600';
                                                 } elseif ($task['status'] == 'Sedang Dikerjakan') {
@@ -109,6 +109,11 @@
                                             <?= htmlspecialchars($task['status']) ?>
                                         </span>
                                     </td>
+                                    <td class="py-3 px-6 whitespace-nowrap">
+                                        <?= htmlspecialchars($task['category_name'] ?? '-') ?>
+                                    </td>
+                                    <td class="py-3 px-6 whitespace-nowrap">
+                                        <?= htmlspecialchars($task['priority_name'] ?? '-') ?> </td>
                                     <td class="py-3 px-6 whitespace-nowrap"><?= htmlspecialchars($task['created_at']) ?></td>
                                     <td class="py-3 px-6 whitespace-nowrap text-center">
                                         <a href="?c=favorite&m=toggle&task_id=<?= htmlspecialchars($task['id']) ?>"
@@ -126,7 +131,7 @@
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="py-6 px-6 text-center text-gray-400">Belum ada tugas.</td>
+                                <td colspan="7" class="py-6 px-6 text-center text-gray-400">Belum ada tugas.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -135,5 +140,4 @@
         </div>
     </div>
 </body>
-
 </html>

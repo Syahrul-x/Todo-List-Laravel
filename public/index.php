@@ -24,21 +24,23 @@ try {
     }
 
     include_once '../app/Http/Controllers/Controller.php';
+    // Include specific controller file
     include_once $controllerFile;
+
 
     if (!class_exists($controllerClass)) {
         throw new InternalServerErrorException("Controller class {$controllerClass} not found.");
     }
 
     $controller = new $controllerClass();
-    
+
     if (!method_exists($controller, $m) || !is_callable([$controller, $m])) {
         throw new InternalServerErrorException("Method {$m} not found in controller {$controllerClass}.");
     }
-    
+
     // Daftar method yang membutuhkan parameter ID
     $methodsWithId = ['update', 'saveUpdate', 'delete', 'show', 'edit'];
-    
+
     // Panggil method dengan atau tanpa ID
     if (in_array($m, $methodsWithId) && $id !== null) {
         $controller->$m($id);
