@@ -23,11 +23,23 @@ class EventController extends Controller
 
     public function create()
     {
-        $this->loadView('events/create', ['username' => $_SESSION['user']['name']], 'main');
+        // Pastikan 'old_input' dan 'error_message' dihapus setelah dibaca di view
+        // agar tidak muncul lagi jika user refresh halaman create
+        $old_input = $_SESSION['old_input'] ?? [];
+        $error_message = $_SESSION['error_message'] ?? null;
+        unset($_SESSION['old_input']);
+        unset($_SESSION['error_message']);
+
+        $this->loadView('events/create', [
+            'username' => $_SESSION['user']['name'],
+            'old_input' => $old_input, // Teruskan ke view
+            'error_message' => $error_message // Teruskan ke view
+        ], 'main');
     }
 
     public function store()
     {
+        header('Content-Type: application/json'); // Mengatur header untuk respons JSON
         $eventModel = $this->loadModel('Event');
         $userId = $_SESSION['user']['id'];
 
@@ -36,13 +48,20 @@ class EventController extends Controller
         $startTime = $_POST['start_time'] ?? '';
         $endTime = $_POST['end_time'] ?? null;
         $location = trim($_POST['location'] ?? '');
+        $includeEndTime = $_POST['include_end_time'] ?? 'off'; // Tangkap nilai checkbox
 
         // Validasi input
         if (empty($eventName) || empty($startTime)) {
-            $_SESSION['error_message'] = "Nama Event dan Waktu Mulai tidak boleh kosong.";
-            $_SESSION['old_input'] = $_POST;
-            header("Location: ?c=event&m=create");
+            echo json_encode([
+                'success' => false,
+                'message' => "Nama Event dan Waktu Mulai tidak boleh kosong."
+            ]);
             exit();
+        }
+
+        // Jika checkbox tidak dicentang, pastikan endTime menjadi null
+        if ($includeEndTime === 'off') {
+            $endTime = null;
         }
 
         $data = [
@@ -51,27 +70,34 @@ class EventController extends Controller
             'description' => $description,
             'start_time' => $startTime,
             'location' => $location,
+            'end_time' => $endTime // Pastikan end_time selalu ada di array data, meskipun null
         ];
-
-        if (!empty($endTime)) {
-            $data['end_time'] = $endTime;
-        }
 
         $success = $eventModel->create($data);
 
-        header("Location: ?c=event&m=index");
+        if ($success) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Event berhasil ditambahkan!'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal menambahkan event. Silakan coba lagi.'
+            ]);
+        }
         exit;
     }
 
     public function edit($id = null)
     {
         if (!$id) {
+            $_SESSION['error_message'] = "ID event tidak ditemukan.";
             header("Location: ?c=event&m=index");
             exit;
         }
 
         $eventModel = $this->loadModel('Event');
-
         $event = $eventModel->getById($id);
 
         if (!$event || $event['user_id'] !== $_SESSION['user']['id']) {
@@ -80,18 +106,33 @@ class EventController extends Controller
             exit;
         }
 
-        $this->loadView('events/edit', ['event' => $event, 'username' => $_SESSION['user']['name']], 'main');
+        // Pastikan 'error_message' dan 'success_message' dihapus setelah dibaca di view
+        $error_message = $_SESSION['error_message'] ?? null;
+        $success_message = $_SESSION['success_message'] ?? null;
+        unset($_SESSION['error_message']);
+        unset($_SESSION['success_message']);
+
+        $this->loadView('events/edit', [
+            'event' => $event,
+            'username' => $_SESSION['user']['name'],
+            'error_message' => $error_message, // Teruskan ke view
+            'success_message' => $success_message // Teruskan ke view
+        ], 'main');
     }
+
 
     public function saveUpdate($id = null)
     {
+        header('Content-Type: application/json'); // Mengatur header untuk respons JSON
         if ($id === null) {
             $id = $_POST['id'] ?? $_GET['id'] ?? null;
         }
 
         if (!$id) {
-            $_SESSION['error_message'] = "ID event tidak ditemukan.";
-            header("Location: ?c=event&m=index");
+            echo json_encode([
+                'success' => false,
+                'message' => "ID event tidak ditemukan."
+            ]);
             exit();
         }
 
@@ -100,21 +141,31 @@ class EventController extends Controller
 
         $existingEvent = $eventModel->getById($id);
         if (!$existingEvent || $existingEvent['user_id'] !== $userId) {
-            $_SESSION['error_message'] = "Event tidak ditemukan atau Anda tidak memiliki hak akses untuk mengubahnya.";
-            header("Location: ?c=event&m=index");
+            echo json_encode([
+                'success' => false,
+                'message' => "Event tidak ditemukan atau Anda tidak memiliki hak akses untuk mengubahnya."
+            ]);
             exit();
         }
 
         $eventName = trim($_POST['event_name'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $startTime = $_POST['start_time'] ?? '';
-        $endTime = $_POST['end_time'] ?? null; 
+        $endTime = $_POST['end_time'] ?? null;
         $location = trim($_POST['location'] ?? '');
+        $includeEndTime = $_POST['include_end_time'] ?? 'off'; // Tangkap nilai checkbox
 
         if (empty($eventName) || empty($startTime)) {
-            $_SESSION['error_message'] = "Nama Event dan Waktu Mulai tidak boleh kosong.";
-            header("Location: ?c=event&m=edit&id=" . $id);
+            echo json_encode([
+                'success' => false,
+                'message' => "Nama Event dan Waktu Mulai tidak boleh kosong."
+            ]);
             exit();
+        }
+
+        // Jika checkbox tidak dicentang, pastikan endTime menjadi null
+        if ($includeEndTime === 'off') {
+            $endTime = null;
         }
 
         $data = [
@@ -122,50 +173,61 @@ class EventController extends Controller
             'description' => $description,
             'start_time' => $startTime,
             'location' => $location,
+            'end_time' => $endTime // Pastikan end_time selalu ada di array data, meskipun null
         ];
 
-        if (!empty($endTime)) {
-            $data['end_time'] = $endTime;
-        } else {
-            $data['end_time'] = null;
-        }
-
-
-        // Panggil method update di model.
         $success = $eventModel->update($id, $data);
 
         if ($success) {
-            $_SESSION['success_message'] = "Event '{$eventName}' berhasil diperbarui!";
+            echo json_encode([
+                'success' => true,
+                'message' => "Event '{$eventName}' berhasil diperbarui!"
+            ]);
         } else {
-            $_SESSION['error_message'] = "Gagal memperbarui event. Silakan coba lagi.";
+            echo json_encode([
+                'success' => false,
+                'message' => "Gagal memperbarui event. Silakan coba lagi."
+            ]);
         }
-
-        // Arahkan kembali ke halaman daftar event.
-        header("Location: ?c=event&m=index");
         exit();
     }
 
     public function delete($id = null)
     {
+        header('Content-Type: application/json'); // Mengatur header untuk respons JSON
         if (!$id) {
-            header("Location: ?c=event&m=index");
-            exit;
+            echo json_encode([
+                'success' => false,
+                'message' => "ID event tidak ditemukan."
+            ]);
+            exit();
         }
 
-        // Memuat model 'Event'.
         $eventModel = $this->loadModel('Event');
         $userId = $_SESSION['user']['id'];
 
         $existingEvent = $eventModel->getById($id);
         if (!$existingEvent || $existingEvent['user_id'] !== $userId) {
-            $_SESSION['error_message'] = "Event tidak ditemukan atau Anda tidak memiliki hak akses untuk menghapusnya.";
-            header("Location: ?c=event&m=index");
+            echo json_encode([
+                'success' => false,
+                'message' => "Event tidak ditemukan atau Anda tidak memiliki hak akses untuk menghapusnya."
+            ]);
             exit();
         }
 
         $success = $eventModel->delete($id);
 
-        header("Location: ?c=event&m=index");
+        if ($success) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Event berhasil dihapus!'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal menghapus event. Silakan coba lagi.'
+            ]);
+        }
         exit;
     }
 }

@@ -19,21 +19,22 @@
             Edit Event
         </h2>
 
-        <?php if (isset($_SESSION['error_message'])): ?>
-            <div class="mb-4 p-3 bg-red-600 text-white rounded font-medium">
-                <?= htmlspecialchars($_SESSION['error_message']) ?>
+        <?php if (isset($error_message) && !empty($error_message)): ?>
+            <div id="initial-alert-message" class="mb-4 p-3 bg-red-600 text-white rounded font-medium">
+                <?= htmlspecialchars($error_message) ?>
             </div>
-            <?php unset($_SESSION['error_message']); ?>
         <?php endif; ?>
 
-        <?php if (isset($_SESSION['success_message'])): ?>
-            <div class="mb-4 p-3 bg-green-600 text-white rounded font-medium">
-                <?= htmlspecialchars($_SESSION['success_message']) ?>
+        <?php if (isset($success_message) && !empty($success_message)): ?>
+            <div id="initial-alert-message" class="mb-4 p-3 bg-green-600 text-white rounded font-medium">
+                <?= htmlspecialchars($success_message) ?>
             </div>
-            <?php unset($_SESSION['success_message']); ?>
         <?php endif; ?>
 
-        <form action="?c=event&m=saveUpdate" method="post" class="space-y-6">
+        <div id="ajax-alert-message-container">
+            </div>
+
+        <form action="?c=event&m=saveUpdate" method="post" class="space-y-6" id="editEventForm">
             <input type="hidden" name="id" value="<?= htmlspecialchars($event['id'] ?? '') ?>">
 
             <div>

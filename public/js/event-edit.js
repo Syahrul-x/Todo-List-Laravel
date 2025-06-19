@@ -4,6 +4,9 @@ const includeEndTimeCheckbox = document.getElementById('include_end_time');
 const endTimeContainer = document.getElementById('end_time_container');
 const endTimeInput = document.getElementById('end_time');
 const startTimeInput = document.getElementById('start_time');
+const editEventForm = document.getElementById('editEventForm'); // Ambil form
+const initialAlertMessage = document.getElementById('initial-alert-message'); // Untuk pesan dari PHP saat pertama load
+const ajaxAlertMessageContainer = document.getElementById('ajax-alert-message-container'); // Untuk pesan dari AJAX
 
 function getNowDateTimeLocal() {
     const now = new Date();
@@ -20,47 +23,118 @@ function setMinDateTimeLocal(inputElement, minDateTime) {
 function toggleEndTimeVisibility() {
     if (includeEndTimeCheckbox.checked) {
         endTimeContainer.classList.remove('hidden');
-        if (!endTimeInput.value || endTimeInput.value < startTimeInput.value) {
+        if (!endTimeInput.value) { // Hanya tambahkan required jika input kosong
             endTimeInput.setAttribute('required', 'required');
         }
         setMinDateTimeLocal(endTimeInput, startTimeInput.value || getNowDateTimeLocal());
+        // Jika endTimeInput.value sudah ada dan kurang dari startTimeInput.value, reset
+        if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
+            endTimeInput.value = startTimeInput.value;
+        }
     } else {
         endTimeContainer.classList.add('hidden');
         endTimeInput.removeAttribute('required');
+        endTimeInput.value = ''; // Kosongkan nilai saat disembunyikan
         endTimeInput.removeAttribute('min');
     }
 }
 
+// Fungsi untuk menampilkan pesan (sukses/error) dari AJAX
+function showAjaxAlert(message, type = 'success') {
+    if (ajaxAlertMessageContainer) {
+        ajaxAlertMessageContainer.innerHTML = ''; // Clear previous messages
+        const newAlert = document.createElement('div');
+        newAlert.className = `mb-4 p-3 rounded font-medium ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`;
+        newAlert.textContent = message;
+        ajaxAlertMessageContainer.appendChild(newAlert);
+        setTimeout(() => {
+            newAlert.remove(); // Hapus pesan setelah beberapa detik
+        }, 3000); // Pesan akan hilang setelah 3 detik
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Sembunyikan pesan awal dari PHP setelah beberapa detik
+    if (initialAlertMessage) {
+        setTimeout(() => { initialAlertMessage.remove(); }, 3000);
+    }
+
     const now = getNowDateTimeLocal();
+    // Tetapkan min_date untuk start_time agar tidak bisa pilih tanggal di masa lalu
     setMinDateTimeLocal(startTimeInput, now);
 
-    if (startTimeInput.value && startTimeInput.value < now) {
-        startTimeInput.value = '';
-    }
-
     toggleEndTimeVisibility();
-});
 
-includeEndTimeCheckbox.addEventListener('change', toggleEndTimeVisibility);
+    // Event listener untuk checkbox
+    includeEndTimeCheckbox.addEventListener('change', toggleEndTimeVisibility);
 
-startTimeInput.addEventListener('change', () => {
-    if (includeEndTimeCheckbox.checked) {
-        if (startTimeInput.value) {
-            setMinDateTimeLocal(endTimeInput, startTimeInput.value);
-            if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
-                endTimeInput.value = startTimeInput.value;
+    // Event listener untuk start_time
+    startTimeInput.addEventListener('change', () => {
+        if (includeEndTimeCheckbox.checked) {
+            if (startTimeInput.value) {
+                setMinDateTimeLocal(endTimeInput, startTimeInput.value);
+                if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
+                    endTimeInput.value = startTimeInput.value;
+                }
+            } else {
+                setMinDateTimeLocal(endTimeInput, getNowDateTimeLocal());
             }
-        } else {
-            setMinDateTimeLocal(endTimeInput, getNowDateTimeLocal());
         }
-    }
-});
+    });
 
-endTimeInput.addEventListener('input', function () {
-    if (endTimeInput.value !== '') {
-        endTimeInput.setAttribute('required', 'required');
-    } else {
-        endTimeInput.removeAttribute('required');
-    }
+    // Event listener untuk end_time (untuk mengelola required)
+    endTimeInput.addEventListener('input', function () {
+        if (includeEndTimeCheckbox.checked) {
+            if (this.value) {
+                this.setAttribute('required', 'required');
+            } else {
+                this.removeAttribute('required');
+            }
+        }
+    });
+
+    // Tambahkan event listener untuk form submission dengan AJAX
+    editEventForm.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Mencegah form submit normal
+
+        // Clear previous AJAX alerts
+        if (ajaxAlertMessageContainer) {
+            ajaxAlertMessageContainer.innerHTML = '';
+        }
+
+        const formData = new FormData(this);
+
+        // Jika include_end_time tidak dicentang, pastikan end_time tidak terkirim atau kosong
+        if (!includeEndTimeCheckbox.checked) {
+            formData.delete('end_time'); // Hapus jika ada
+            formData.append('end_time', ''); // Atau kirim string kosong agar NULL di DB
+            formData.append('include_end_time', 'off'); // Kirim status off
+        } else {
+             formData.append('include_end_time', 'on'); // Kirim status on
+        }
+
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showAjaxAlert(result.message, 'success');
+                // Opsional: Redirect ke halaman daftar event setelah sukses
+                setTimeout(() => {
+                    window.location.href = '?c=event&m=index';
+                }, 1500);
+            } else {
+                showAjaxAlert(result.message, 'error');
+                // Tetap di halaman edit dan tampilkan error
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAjaxAlert('Terjadi kesalahan saat mengirim data. Silakan coba lagi.', 'error');
+        }
+    });
 });

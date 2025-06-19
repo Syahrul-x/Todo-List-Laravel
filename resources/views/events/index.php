@@ -15,7 +15,6 @@
 </head>
 <body class="bg-gray-900 text-gray-100">
     <div class="flex flex-col lg:flex-row min-h-screen">
-        <!-- Sidebar -->
         <aside class="w-full lg:w-1/4 bg-[#2c2e31] p-4 shadow-lg lg:h-screen">
             <div class="user-info-sidebar text-center mb-6">
                 <div class="flex justify-center items-center w-16 h-16 rounded-full bg-[#ff5630] text-white text-2xl font-bold mx-auto">
@@ -35,7 +34,6 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
         <main class="flex-1 bg-[#1e1e1e] p-6 overflow-y-auto">
             <nav class="breadcrumb text-[#a9b7c6] mb-6">
                 <a href="?c=dashboard&m=index" class="hover:text-white">Home</a> <span class="mx-2">/</span> <span class="text-[#007AFF]"><?= htmlspecialchars($username ?? 'Pengguna') ?>'s Event List</span>
@@ -57,10 +55,29 @@
                     </div>
                 </div>
             </section>
+
+            <?php // Pesan dari $_SESSION akan ditampilkan di sini saat halaman dimuat ulang (misalnya dari redirect setelah login) ?>
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div id="session-error-message" class="mb-4 p-3 bg-red-600 text-white rounded font-medium">
+                    <?= htmlspecialchars($_SESSION['error_message']) ?>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div id="session-success-message" class="mb-4 p-3 bg-green-600 text-white rounded font-medium">
+                    <?= htmlspecialchars($_SESSION['success_message']) ?>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+
+            <div id="ajax-message-container" class="mb-4">
+                </div>
+
             <section class="event-list-data">
                 <div class="overflow-x-auto">
                     <?php if (!empty($events)): ?>
-                        <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden">
+                        <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden" id="eventTable">
                             <thead>
                                 <tr class="bg-[#4a4a4a] text-left text-gray-300 uppercase text-sm leading-normal">
                                     <th class="py-3 px-6">Nama Event</th>
@@ -73,7 +90,7 @@
                             </thead>
                             <tbody class="text-gray-200 text-sm font-light">
                                 <?php foreach ($events as $event): ?>
-                                    <tr class="border-b border-gray-600 hover:bg-[#3a3a3a]">
+                                    <tr id="event-row-<?= htmlspecialchars($event['id']) ?>" class="border-b border-gray-600 hover:bg-[#3a3a3a]">
                                         <td class="py-3 px-6 whitespace-nowrap"><?= htmlspecialchars($event['event_name']) ?></td>
                                         <td class="py-3 px-6">
                                             <?= htmlspecialchars(substr($event['description'] ?? '', 0, 50)) ?>
@@ -91,16 +108,15 @@
                                         <td class="py-3 px-6 whitespace-nowrap text-center">
                                             <a href="?c=event&m=edit&id=<?= htmlspecialchars($event['id']) ?>"
                                                class="text-blue-500 hover:text-blue-700 font-medium mr-3">Edit</a>
-                                            <a href="?c=event&m=delete&id=<?= htmlspecialchars($event['id']) ?>"
-                                               onclick="return confirm('Yakin ingin menghapus event ini?')"
-                                               class="text-red-500 hover:text-red-700 font-medium">Hapus</a>
+                                            <button type="button" data-id="<?= htmlspecialchars($event['id']) ?>"
+                                               class="delete-event-btn text-red-500 hover:text-red-700 font-medium bg-transparent border-none cursor-pointer">Hapus</button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <div class="text-center py-12">
+                        <div id="no-event-message" class="text-center py-12">
                             <i class="fas fa-calendar-alt text-gray-600 text-5xl mb-4"></i>
                             <p class="text-gray-400 text-lg">Belum ada event yang dijadwalkan.</p>
                             <a href="?c=event&m=create" class="mt-4 inline-block text-[#2684FF] hover:text-[#006bb3]">
@@ -112,5 +128,93 @@
             </section>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteButtons = document.querySelectorAll('.delete-event-btn');
+            const ajaxMessageContainer = document.getElementById('ajax-message-container');
+            const eventTable = document.getElementById('eventTable');
+            const noEventMessage = document.getElementById('no-event-message');
+
+            function showAjaxAlert(message, type = 'success') {
+                if (ajaxMessageContainer) {
+                    ajaxMessageContainer.innerHTML = ''; // Clear previous messages
+                    const newAlert = document.createElement('div');
+                    newAlert.className = `p-3 rounded font-medium ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`;
+                    newAlert.textContent = message;
+                    ajaxMessageContainer.appendChild(newAlert);
+                    setTimeout(() => {
+                        newAlert.remove(); // Hapus pesan setelah beberapa detik
+                    }, 3000); // Pesan akan hilang setelah 3 detik
+                }
+            }
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const eventId = this.dataset.id; // Mendapatkan ID event dari data-id
+                    const eventRow = document.getElementById(`event-row-${eventId}`); // Mendapatkan baris event
+
+                    if (!confirm('Yakin ingin menghapus event ini?')) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`?c=event&m=delete&id=${eventId}`, {
+                            method: 'POST', // Menggunakan POST karena method HTTP DELETE mungkin perlu konfigurasi server
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest' // Opsional: menandai sebagai AJAX request
+                            },
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showAjaxAlert(result.message, 'success');
+                            if (eventRow) {
+                                eventRow.remove(); // Hapus baris dari DOM
+
+                                // Periksa apakah tabel kosong setelah penghapusan
+                                if (eventTable && eventTable.tBodies[0].rows.length === 0) {
+                                    eventTable.classList.add('hidden'); // Sembunyikan tabel
+                                    if (noEventMessage) {
+                                        noEventMessage.classList.remove('hidden'); // Tampilkan pesan "belum ada event"
+                                    }
+                                }
+                            }
+                        } else {
+                            showAjaxAlert(result.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showAjaxAlert('Terjadi kesalahan saat menghapus event.', 'error');
+                    }
+                });
+            });
+
+            // Sembunyikan pesan sukses/error dari sesi setelah beberapa waktu
+            const sessionErrorMessage = document.getElementById('session-error-message');
+            const sessionSuccessMessage = document.getElementById('session-success-message');
+            if (sessionErrorMessage) {
+                setTimeout(() => { sessionErrorMessage.remove(); }, 3000);
+            }
+            if (sessionSuccessMessage) {
+                setTimeout(() => { sessionSuccessMessage.remove(); }, 3000);
+            }
+
+            // Inisialisasi tampilan pesan kosong jika tidak ada event saat load
+            // Dilakukan setelah DOMContentLoaded untuk memastikan semua elemen HTML sudah tersedia
+            if (eventTable && eventTable.tBodies[0].rows.length === 0) {
+                eventTable.classList.add('hidden');
+                if (noEventMessage) {
+                    noEventMessage.classList.remove('hidden');
+                }
+            } else {
+                if (noEventMessage) {
+                    noEventMessage.classList.add('hidden');
+                }
+            }
+        });
+    </script>
 </body>
 </html>

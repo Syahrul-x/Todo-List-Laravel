@@ -6,14 +6,14 @@ class Event extends Model
     protected $table = 'events'; 
     public function getAllByUser($userId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE user_id = ? ORDER BY start_time ASC"); //
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE user_id = ? ORDER BY start_time ASC");
         $stmt->bind_param("i", $userId); 
         $stmt->execute();
 
         $result = $stmt->get_result(); 
-        $events = []; //
-        while ($row = $result->fetch_assoc()) { //
-            $events[] = $row; //
+        $events = []; 
+        while ($row = $result->fetch_assoc()) { 
+            $events[] = $row; 
         }
         return $events; 
     }
@@ -61,8 +61,9 @@ class Event extends Model
             $types = 'sssssi';
             $params = [$data['event_name'], $data['description'], $data['start_time'], $data['end_time'], $data['location'], $id]; 
         } else {
+            // Jika end_time kosong atau tidak disertakan, set ke NULL di database
             $setClauses = 'event_name = ?, description = ?, start_time = ?, end_time = NULL, location = ?, updated_at = NOW()'; 
-            $types = 'sssi';
+            $types = 'ssssi'; // 'end_time' menjadi NULL, jadi tidak ada 's' untuk itu
             $params = [$data['event_name'], $data['description'], $data['start_time'], $data['location'], $id]; 
         }
 
