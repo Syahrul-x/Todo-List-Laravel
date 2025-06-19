@@ -61,10 +61,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const now = getNowDateTimeLocal();
-    // Tetapkan min_date untuk start_time agar tidak bisa pilih tanggal di masa lalu
-    setMinDateTimeLocal(startTimeInput, now);
+    const currentStartTimeValue = startTimeInput.value; // Ambil nilai start_time dari PHP
 
-    toggleEndTimeVisibility();
+    // Modifikasi bagian ini untuk startTimeInput
+    // Jika currentStartTimeValue adalah masa lalu dari 'now', biarkan saja.
+    // Jika currentStartTimeValue adalah masa depan atau sekarang, set min ke currentStartTimeValue atau now (mana yang lebih besar)
+    if (currentStartTimeValue && currentStartTimeValue < now) {
+        // Event ini di masa lalu, biarkan inputnya, tidak perlu set min attribute
+        // agar user bisa menyimpan tanpa error validasi jika tidak mengubah waktu
+        startTimeInput.removeAttribute('min');
+    } else {
+        // Event ini di masa depan atau sekarang, set min ke waktu saat ini
+        setMinDateTimeLocal(startTimeInput, now);
+    }
+
+
+    toggleEndTimeVisibility(); //
 
     // Event listener untuk checkbox
     includeEndTimeCheckbox.addEventListener('change', toggleEndTimeVisibility);
@@ -103,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ajaxAlertMessageContainer.innerHTML = '';
         }
 
-        const formData = new FormData(this);
+        const formData = new FormData(this); //
 
         // Jika include_end_time tidak dicentang, pastikan end_time tidak terkirim atau kosong
         if (!includeEndTimeCheckbox.checked) {
@@ -115,26 +127,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(this.action, {
+            const response = await fetch(this.action, { // Kirim ke URL action form
                 method: 'POST',
                 body: formData
             });
 
-            const result = await response.json();
+            const result = await response.json(); //
 
             if (result.success) {
-                showAjaxAlert(result.message, 'success');
+                showAjaxAlert(result.message, 'success'); //
                 // Opsional: Redirect ke halaman daftar event setelah sukses
                 setTimeout(() => {
                     window.location.href = '?c=event&m=index';
                 }, 1500);
             } else {
-                showAjaxAlert(result.message, 'error');
+                showAjaxAlert(result.message, 'error'); //
                 // Tetap di halaman edit dan tampilkan error
             }
         } catch (error) {
             console.error('Error:', error);
-            showAjaxAlert('Terjadi kesalahan saat mengirim data. Silakan coba lagi.', 'error');
+            showAjaxAlert('Terjadi kesalahan saat mengirim data. Silakan coba lagi.', 'error'); //
         }
     });
 });

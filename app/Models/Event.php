@@ -77,9 +77,11 @@ class Event extends Model
     public function delete($id)
     {
         $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id = ?");
-        $stmt->bind_param("i", $id); 
-        $result = $stmt->execute(); 
-
+        $stmt->bind_param("i", $id);
+        $result = $stmt->execute();
+        if (!$result) {
+            error_log("Error deleting event ID {$id}: " . $stmt->error); // Log error SQL
+        }
         return $result;
     }
 }

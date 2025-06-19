@@ -194,14 +194,15 @@ class EventController extends Controller
 
     public function delete($id = null)
     {
-        header('Content-Type: application/json'); // Mengatur header untuk respons JSON
+        header('Content-Type: application/json');
+        error_log("Attempting to delete event with ID: " . ($id ?? 'NULL')); // Log ID yang diterima
         if (!$id) {
             echo json_encode([
                 'success' => false,
-                'message' => "ID event tidak ditemukan."
+                'message' => "ID event tidak ditemukan di controller."
             ]);
-            exit();
-        }
+        exit();
+    }
 
         $eventModel = $this->loadModel('Event');
         $userId = $_SESSION['user']['id'];
