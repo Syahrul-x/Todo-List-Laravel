@@ -57,21 +57,6 @@
                     </div>
                 </div>
             </section>
-
-            <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="mb-4 p-3 bg-red-600 text-white rounded font-medium">
-                    <?= htmlspecialchars($_SESSION['error_message']) ?>
-                </div>
-                <?php unset($_SESSION['error_message']); ?>
-            <?php endif; ?>
-
-            <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="mb-4 p-3 bg-green-600 text-white rounded font-medium">
-                    <?= htmlspecialchars($_SESSION['success_message']) ?>
-                </div>
-                <?php unset($_SESSION['success_message']); ?>
-            <?php endif; ?>
-
             <section class="event-list-data">
                 <div class="overflow-x-auto">
                     <?php if (!empty($events)): ?>
