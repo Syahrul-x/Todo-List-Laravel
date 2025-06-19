@@ -31,12 +31,12 @@
                 </div>
             <div class="page-actions">
                 <!-- Tombol untuk desktop -->
-                <a href="?c=notes&m=create#" class="hidden md:inline-block bg-green-600 px-4 py-2 rounded text-white">
+                <a href="?c=notes&m=create#" class="hidden md:inline-block bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
                     + tambah catatan
                 </a>
 
                 <!-- Tombol ikon untuk mobile -->
-                <a href="?c=notes&m=create#" class="inline-block md:hidden bg-green-600 p-2 rounded text-white">
+                <a href="?c=notes&m=create#" class="inline-block md:hidden bg-green-600 hover:bg-green-700 p-2 rounded text-white">
                     +
                 </a>
             </div>
