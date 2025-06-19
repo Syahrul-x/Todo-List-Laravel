@@ -98,4 +98,27 @@ class NotesController extends Controller
         header("Location: ?c=notes&m=index");
         exit;
     }
+
+    public function manage()
+    {
+        // 1. OTORISASI: Selalu lakukan pengecekan hak akses di paling awal.
+        // Gunakan === (perbandingan ketat) untuk membandingkan username.
+        if (!isset($_SESSION['user']) || $_SESSION['user']['name'] !== 'admin') {
+            // Jika user tidak login ATAU namanya BUKAN 'admin', alihkan ke halaman index.
+            header("Location: ?c=notes&m=index");
+            exit();
+        }
+
+        // 2. JIKA LOLOS OTORISASI, baru proses pengambilan data.
+        $notesModel = $this->loadModel('Notes');
+        
+        // Simpan hasil dari getAll() ke dalam variabel $notes.
+        $notes = $notesModel->getAll();
+
+        // 3. Muat view dengan data yang sudah benar dan siap digunakan.
+        $this->loadView('notes/managenotes', [
+            'notes'    => $notes,
+            'username' => $_SESSION['user']['name']
+        ], 'main');
+    }
 }

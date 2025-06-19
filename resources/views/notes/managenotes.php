@@ -19,15 +19,11 @@
         </aside>
 
     <main class="flex-1 bg-[#1e1e1e] p-6">
-        <nav class="breadcrumb text-[#a9b7c6]">
-            <a href="#">Home</a> / <span class="text-[#007AFF]"><?= $username ?>'s Meeting Notes</span>
-        </nav>
-
         <section class="page-header mb-6">
             <div class="flex items-center justify-between">
                 <div class="page-title text-[#e0e0e0] flex items-center">
                     <span class="mr-2">📝</span>
-                    <h1 class="text-2xl font-semibold">Meeting Notes</h1>
+                    <h1 class="text-2xl font-semibold">Manage All Notes</h1>
                 </div>
             <div class="page-actions">
                 <!-- Tombol untuk desktop -->
@@ -39,27 +35,22 @@
                 <a href="?c=notes&m=create#" class="inline-block md:hidden bg-green-600 hover:bg-green-700 p-2 rounded text-white">
                     +
                 </a>
-                <?php if (isset($_SESSION['user']) && $_SESSION['user']['name'] === 'admin'): ?>
                     
-                    <a href="?c=notes&m=manage" class="hidden md:inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white transition-colors duration-200 ml-2">
-                        ⚙️Kelola
-                    </a>
+                <a href="?c=notes&m=index" class="hidden md:inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white transition-colors duration-200 ml-2">
+                    < back
+                </a>
                     
-                    <a href="?c=notes&m=manage" class="inline-block md:hidden bg-blue-600 hover:bg-blue-700 p-2 rounded text-white transition-colors duration-200 ml-2">
-                        ⚙️
-                    </a>
-
-                <?php endif; ?>
+                <a href="?c=notes&m=index" class="inline-block md:hidden bg-blue-600 hover:bg-blue-700 p-2 rounded text-white transition-colors duration-200 ml-2">
+                    <
+                </a>
             </div>
         </section>
-        <div class="mb-4">
-            <input type="text" id="searchInput" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search Notes by Name...">
-        </div>
 
         <div class="overflow-x-auto overflow-y-auto">
             <table class="min-w-full bg-[#303030] rounded-lg overflow-hidden table-fixed">
                 <thead>
                     <tr class="bg-[#4a4a4a] text-left text-gray-300 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6">User Id</th>
                         <th class="py-3 px-6">Rapat</th>
                         <th class="py-3 px-6">Isi</th>
                         <th class="py-3 px-6">Tanggal Dibuat</th>
@@ -70,6 +61,7 @@
                     <?php if (!empty($notes)): ?>
                         <?php foreach ($notes as $note): ?>
                             <tr class="border-b border-gray-600 hover:bg-[#3a3a3a]">
+                                <td class="py-3 px-6"><?= htmlspecialchars($note['user_id']) ?></td>
                                 <td class="py-3 px-6"><?= htmlspecialchars($note['title']) ?></td>
                                 <td class="py-3 px-6">
                                     <?= htmlspecialchars($note['description'] ?? '') ?>
