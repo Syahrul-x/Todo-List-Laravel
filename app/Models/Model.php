@@ -8,7 +8,7 @@ class Model {
         $dbusername = $_ENV['DB_USERNAME'] ?? 'root';
         $dbpassword = $_ENV['DB_PASSWORD'] ?? '';
         $dbname = $_ENV['DB_DATABASE'] ?? 'FP01';
-        $port = $_ENV['DB_PORT'] ?? '3306';
+        $port = $_ENV['DB_PORT'] ?? '4306';
 
         $this->db = new mysqli($dbhostname, $dbusername, $dbpassword, $dbname, $port);
 

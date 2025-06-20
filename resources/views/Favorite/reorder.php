@@ -28,9 +28,10 @@
                     <i class="fas fa-sort mr-3"></i>
                     Atur Urutan Favorit
                 </h2>
-                <a href="?c=favorite&m=index" class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition">
-                    <i class="fas fa-arrow-left mr-2"></i>Kembali
-                </a>
+                    <a href="?c=dashboard&m=index" class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition
+                    text-sm md:text-base lg:text-lg w-full md:w-auto text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>Kembali
+                    </a>
             </div>
 
             <div class="mb-4 text-gray-400">

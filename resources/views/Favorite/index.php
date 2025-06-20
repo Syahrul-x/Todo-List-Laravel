@@ -21,11 +21,13 @@
                     <i class="fas fa-star text-yellow-500 mr-3"></i>
                     Tugas Favorit
                 </h2>
-                <div class="flex gap-3">
-                    <a href="?c=favorite&m=reorder" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-full transition">
+                <div class="flex flex-col md:flex-row md:justify-between items-center gap-3 p-4">
+                    <a href="?c=favorite&m=reorder" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-full transition 
+                    text-sm md:text-base lg:text-lg w-full md:w-auto text-center">
                         <i class="fas fa-sort mr-2"></i>Atur Urutan
                     </a>
-                    <a href="?c=dashboard&m=index" class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition">
+                    <a href="?c=dashboard&m=index" class="bg-[#2684FF] hover:bg-[#006bb3] text-white font-semibold py-2 px-4 rounded-full transition
+                    text-sm md:text-base lg:text-lg w-full md:w-auto text-center">
                         <i class="fas fa-arrow-left mr-2"></i>Kembali
                     </a>
                 </div>
