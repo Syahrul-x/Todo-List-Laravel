@@ -289,7 +289,6 @@ ALTER TABLE `messages`
 -- Indexes for table `notes`
 --
 ALTER TABLE `notes`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_notes_user` (`user_id`);
 
 --
@@ -453,6 +452,43 @@ ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
   ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
+
+--
+-- Table structure for table `reminders`
+--
+-- This table stores reminders for tasks or events, which will be displayed on the calendar.
+--
+
+CREATE TABLE `reminders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `task_id` int(11) DEFAULT NULL,
+  `event_id` int(11) DEFAULT NULL,
+  `reminder_time` datetime NOT NULL,
+  `message` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_reminder_task` (`user_id`, `task_id`),
+  UNIQUE KEY `unique_reminder_event` (`user_id`, `event_id`),
+  KEY `reminder_user_fk` (`user_id`),
+  KEY `reminder_task_fk` (`task_id`),
+  KEY `reminder_event_fk` (`event_id`),
+  CONSTRAINT `reminder_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `reminder_task_fk` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `reminder_event_fk` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `chk_task_or_event` CHECK (`task_id` IS NOT NULL OR `event_id` IS NOT NULL)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reminders`
+--
+-- Example data: A reminder for a task with ID 13 for user with ID 1.
+--
+
+INSERT INTO `reminders` (`id`, `user_id`, `task_id`, `event_id`, `reminder_time`, `message`, `created_at`, `updated_at`) VALUES
+(1, 1, 13, NULL, '2025-06-25 10:00:00', 'Jangan lupa kerjakan modul MRS sebelum deadline!', '2025-06-19 13:30:00', '2025-06-19 13:30:00');
+
 
 -- Add this to your fp01.sql file, or run directly on your database
 --

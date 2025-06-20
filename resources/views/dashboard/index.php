@@ -26,6 +26,8 @@
             <nav class="mt-4">
                 <h3 class="text-gray-400 mb-3 uppercase tracking-wider text-sm">Content</h3>
                 <ul class="space-y-3">
+                    <li><a href="?c=calendar&m=index" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">📅</span> Calendar</a></li>
+
                     <li><a href="#" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">📄</span> All content</a></li>
                     <li><a href="#" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">✅</span> <?= htmlspecialchars($username ?? 'Pengguna') ?>'s task list</a></li>
                     <li><a href="?c=notes&m=index" class="flex items-center p-2 rounded-md text-[#e0e0e0] hover:bg-[#3a3a3a] hover:text-[#2684FF] transition-colors"><span class="mr-2">📝</span> Meeting notes</a></li>
@@ -38,7 +40,27 @@
             <nav class="breadcrumb text-[#a9b7c6] mb-6">
                 <a href="#" class="hover:text-white">Home</a> <span class="mx-2">/</span> <span class="text-[#007AFF]"><?= htmlspecialchars($username ?? 'Pengguna') ?>'s task list</span>
             </nav>
-
+            
+            <section class="upcoming-reminders mb-8">
+                <h2 class="text-xl font-semibold text-white mb-4">Upcoming Events</h2>
+                <div class="bg-[#2c2e31] p-4 rounded-lg shadow-md">
+                    <?php if (!empty($upcomingReminders)): ?>
+                        <ul class="space-y-3">
+                            <?php foreach ($upcomingReminders as $reminder): ?>
+                                <li class="flex items-center justify-between p-2 rounded-md transition-colors hover:bg-[#3a3a3a]">
+                                    <div class="flex items-center">
+                                        <span class="w-3 h-3 rounded-full mr-3 bg-yellow-400"></span>
+                                        <span class="font-medium text-white"><?= htmlspecialchars($reminder['title']) ?></span>
+                                    </div>
+                                    <span class="text-sm text-gray-400"><?= date('D, M j g:i A', strtotime($reminder['event_start_time'])) ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p class="text-gray-400">You have no upcoming reminders.</p>
+                    <?php endif; ?>
+                </div>
+            </section>
             <section class="page-header mb-6">
                 <div class="flex items-center justify-between">
                     <div class="page-title text-[#e0e0e0] flex items-center">

@@ -27,7 +27,11 @@ class DashboardController extends Controller {
     $priorityModel = $this->loadModel('Priority');
 
     $categories = $categoryModel->getAllCategories();
+    $reminderModel = $this->loadModel('Reminder'); //muat model reminder
     $priorities = $priorityModel->getAllPriorities();
+
+    // ambil data upcoming reminders untuk user yang sudah login
+    $upcomingReminders = $reminderModel->getUpcomingReminders($user_id); 
 
     $categoryFilter = $_GET['category_id'] ?? null;
     $priorityFilter = $_GET['priority_id'] ?? null;
@@ -59,7 +63,8 @@ class DashboardController extends Controller {
         'selectedPriority' => $priorityFilter,
         'searchTerm' => $searchTerm, // Pass search term to the view
         'error' => $error,
-        'success' => $success
+        'success' => $success,
+        'upcomingReminders' => $upcomingReminders
       ],
       'main'
     );
