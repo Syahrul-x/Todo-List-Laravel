@@ -52,10 +52,21 @@ class CategoryController extends Controller
                 );
                 return;
             }
-
-            $this->categoryModel->create($name, $description);
-            header("Location:?c=category&m=index");
-            exit();
+            try {
+                // Memanggil method create pada categoryModel
+                $this->categoryModel->create($name, $description);
+                header("Location:?c=category&m=index");
+                exit();
+            } catch (Exception $e) {
+                // Jika ada error saat create, tampilkan error message di view
+                $this->loadView("category/create", [
+                    'error' => "Terjadi kesalahan: Nama kategori tidak boleh sama",
+                    'name' => $name,
+                    'description' => $description,
+                    'title' => 'Tambah Kategori'
+                ], "main");
+                return;
+            }
         }
 
         $this->loadView("category/create", ['title' => 'Tambah Kategori'], "main");

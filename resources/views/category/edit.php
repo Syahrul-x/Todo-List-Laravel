@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Edit Category</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen p-6">
 
@@ -12,7 +13,7 @@
     <h1 class="text-3xl font-semibold mb-6">Edit Category</h1>
 
     <?php if (!empty($error)): ?>
-        <div class="mb-4 p-3 bg-red-600 rounded"><?= htmlspecialchars($error) ?></div>
+        <div id="error-message" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white transition mb-4"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
     <form method="POST" action="?c=category&m=edit&id=<?= $category->id ?>" class="space-y-4">
