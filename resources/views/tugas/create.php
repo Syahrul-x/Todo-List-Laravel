@@ -1,5 +1,3 @@
-// resources/views/tugas/create.php
-// (Pastikan ini adalah seluruh konten file create.php)
 <div class="w-full sm:max-w-2xl mx-auto bg-[#1e1e1e] p-4 sm:p-6 rounded-lg shadow-lg"> <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-white text-center"> <?= htmlspecialchars($title ?? 'Buat Tugas Baru') ?>
     </h2>
 
